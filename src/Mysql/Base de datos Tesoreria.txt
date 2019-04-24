@@ -1,0 +1,41 @@
+Create database Tesoreria;
+
+Use Tesoreria;
+
+Create table MaestroProveedores(
+NIT int not null, 
+Nombre Varchar(45),
+Direccion Varchar(45),
+Telefono int,
+Cuidad Varchar(45),
+Tipo Varchar(1),
+Primary key (NIT));
+
+
+Create table CentroCosto(
+ID int not null, 
+Descripcion Varchar(45),
+Cuenta int,
+Primary key (ID));
+
+
+Create table Comprobantes(
+Comprobante varchar(5) not null, 
+Descripcion Varchar(45),
+Tipo Varchar(1),
+Cuenta int,
+Primary key (Comprobante));
+
+
+Create table MovimientosTesoreria(
+Num_Orden int not null,
+CC int not null,
+NIT_Pro int not null,
+Fecha_Pago date,
+Valor_Pago int,
+Num_Cheque int,
+Comprobante varchar(5) not null, 
+Primary key (Num_Orden),
+Foreign key (Comprobante) references Comprobantes(Comprobante),
+Foreign key (CC) references CentroCosto(ID),
+Foreign key (NIT_Pro) references MaestroProveedores(NIT));
