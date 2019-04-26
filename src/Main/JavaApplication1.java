@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication1;
+package Main;
+
+import Controlador.ControladorProveedor;
+import Vista.Formulario;
 
 /**
  *
@@ -16,7 +19,10 @@ public class JavaApplication1 {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        System.out.println("Hola mundo");
+        Formulario vista = new Formulario();
+        ControladorProveedor cProv = new ControladorProveedor(vista);
+        
+        
     }
     
 }
