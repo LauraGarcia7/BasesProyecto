@@ -5,6 +5,7 @@
  */
 package Controlador;
 
+import Conexion.ProcesarBD;
 import Modelo.Proveedor;
 import Vista.Formulario;
 import java.awt.event.ActionEvent;
@@ -78,9 +79,22 @@ public class ControladorProveedor implements ActionListener, FocusListener{
                          vista.jTextFieldCiudadP.getText().length()!=0 &&
                              vista.jTextFieldTipoP.getText().length()!=0 ){
                 
+                ProcesarBD pBD = new ProcesarBD();
+                pBD.ingresarMaestroProveedores(nit, nombre, direccion, telefono, ciudad, tipo);
+                
+                /**
+                 * En las tres siguientes linieas de codigo se crearon con el proposito inicial de 
+                 * crear una tabla y llenarla.
+                 * 
+                 * Todavia no se lee la base de datos ni se inserta en la JTable lo que esta en la base de
+                 * datos
+                 */
                 proveedor = new Proveedor(nit, telefono, nombre, direccion, ciudad, tipo);
                 String [] datos ={nit+"",  nombre, direccion,telefono+"", ciudad, tipo};
                 tablaProv.addRow(datos);
+                
+                //Se revisa que los datos se esten insertando bien en la base de datos
+                pBD.listar();
                 
                 System.out.println(proveedor.toString());
                 volverNulo();
