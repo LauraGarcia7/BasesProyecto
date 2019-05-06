@@ -5,6 +5,7 @@
  */
 package Controlador;
 
+import Conexion.Conexion;
 import Conexion.ProcesarBD;
 import Modelo.Proveedor;
 import Vista.Formulario;
@@ -12,6 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -21,9 +25,10 @@ import javax.swing.table.DefaultTableModel;
  * @author Johan Sánchez
  */
 public class ControladorProveedor implements ActionListener, FocusListener{
-    
+    private ProcesarBD pBD = new ProcesarBD();
     private Formulario vista;
-    private  Proveedor proveedor;
+    private Proveedor proveedor;
+    private Conexion con = new Conexion();// Sino hay "new" hay error en PreparedStatement ps = con.conectado().prepareStatement(strConsulta) (un nullPointExcetion)
     DefaultTableModel tablaProv = new DefaultTableModel();
 
     public ControladorProveedor(Formulario vista) {
@@ -79,7 +84,7 @@ public class ControladorProveedor implements ActionListener, FocusListener{
                          vista.jTextFieldCiudadP.getText().length()!=0 &&
                              vista.jTextFieldTipoP.getText().length()!=0 ){
                 
-                ProcesarBD pBD = new ProcesarBD();
+                
                 pBD.ingresarMaestroProveedores(nit, nombre, direccion, telefono, ciudad, tipo);
                 
                 /**
@@ -173,7 +178,49 @@ public class ControladorProveedor implements ActionListener, FocusListener{
         for (int i = 0; i < 12; i++) {
         tablaProv.addRow(nulos);
         }*/
-            
+       
+       /**
+        * Inicio de buscar en la base de datos y llenar tabla
+        */
+            String strConsulta = "SELECT * FROM MaestroProveedores";
+            System.out.println("ListAR BASE");
+            pBD.listar();
+        try {
+            PreparedStatement ps = con.conectado().prepareStatement(strConsulta); //Habia error por la variable "con", se debia hacer new
+            System.out.println("Entro Try");
+            ResultSet res = ps.executeQuery();
+
+            int NIT = 0;
+            String Nombre ="";
+            String Direccion ="";
+            int Telefono=0;
+            String Cuidad ="";
+            String Tipo ="";
+            while (res.next()) {
+                NIT = res.getInt("NIT");
+                Nombre = res.getString("Nombre");
+                Direccion = res.getString("Direccion");
+                Telefono = res.getInt("Telefono");
+                Cuidad= res.getString("Cuidad");
+                Tipo= res.getString("Tipo");
+                
+                System.out.println(NIT + "\t" + Nombre + "\t" + Direccion + "\t" +Telefono + "\t"  +Cuidad + "\t" + Tipo);
+                
+                    //Agragamos a la tabla
+                    String [] datos ={NIT+"",  Nombre, Direccion,Telefono+"", Cuidad, Tipo};
+                    tablaProv.addRow(datos);
+            }
+            res.close();
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        } catch (Exception ex) {
+            System.out.println("Error2");
+            System.out.println(ex.toString());
+        }
+        /**
+         * Fin Buscar base de datos
+         */
          vista.jTableProveedores.setModel(tablaProv);
          
     }
